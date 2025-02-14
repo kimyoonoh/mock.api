@@ -3,7 +3,6 @@ package kr.intube.apps.mockapi.common.code;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -13,35 +12,37 @@ import aidt.gla.common.tools.biz.Checker;
 import aidt.gla.common.tools.biz.SetCalc;
 import aidt.gla.common.tools.biz.StrCalc;
 import aidt.gla.common.utils.DateUtil;
+import lombok.Getter;
 
+@Getter
 public enum DataColumnType implements CodeEnum {
-    String       ("STR",    "String",          "String",            "Y", (t) -> { return t; }),
-    Number       ("NUM",    "Number",          "Number,Int",        "Y", (t) -> { return StrCalc.getDigit(t).intValue(); }),
-    Integer      ("INT",    "Integer",         "Number,Int",        "Y", (t) -> { return StrCalc.getDigit(t).intValue(); }),
-    Double       ("DBL",    "Double",          "Number,Real",       "Y", (t) -> { return StrCalc.getDigit(t).doubleValue(); }),
-    Date         ("DT",     "Date",            "Date",              "Y", (t) -> { return DateUtil.toDate(t); }),
-    Datetime     ("DTM",    "Datetime",        "Date",              "Y", (t) -> { return t; }),
-    Boolean      ("BOOL",   "Boolean",         "Boolean",           "Y", (t) -> { return Bool.bool(t); }),
-    JSON         ("JSON",   "JSON",            "JSON",              "Y", (t) -> { return t; }),
-    DataSet      ("DS",     "DataSet",         "*",                 "Y", (t) -> { return t; }),
-    StringArray  ("ASTR",   "StringArray",     "String,ARRAY",      "Y", (t) -> { return getStringArray(t); }),
-    NumberArray  ("ANUM",   "NumberArray",     "Number,Int,ARRAY",  "Y", (t) -> { return getNumberArray(t); }),
-    IntegerArray ("AINT",   "IntegerArray",    "Number,Int,ARRAY",  "Y", (t) -> { return getIntegerArray(t); }),
-    DoubleArray  ("ADBL",   "DoubleArray",     "Number,Real,ARRAY", "Y", (t) -> { return getDoubleArray(t); }),
-    DateArray    ("ADT",    "DateArray",       "Date,ARRAY",        "Y", (t) -> { return getDateArray(t); }),
-    DatetimeArray("ADTM",   "DatetimeArray",   "Date,ARRAY",        "Y", (t) -> { return getStringArray(t); }),
-    BooleanArray ("ABOL",   "BooleanArray",    "Bool,ARRAY",        "Y", (t) -> { return getBoolArray(t); }),
-    List         ("list",   "DataSetArray",    "ARRAY",             "Y", (t) -> { return t; }),
-    Unknown      ("",       "",                 "",                 "N", (t) -> { return t; }),
+    String       ("STR",    "String",          "String",            "Y", t -> t),
+    Number       ("NUM",    "Number",          "Number,Int",        "Y", t -> StrCalc.getDigit(t).intValue()),
+    Integer      ("INT",    "Integer",         "Number,Int",        "Y", t -> StrCalc.getDigit(t).intValue()),
+    Double       ("DBL",    "Double",          "Number,Real",       "Y", t -> StrCalc.getDigit(t).doubleValue()),
+    Date         ("DT",     "Date",            "Date",              "Y", t -> DateUtil.toDate(t)),
+    Datetime     ("DTM",    "Datetime",        "Date",              "Y", t -> t),
+    Boolean      ("BOOL",   "Boolean",         "Boolean",           "Y", t -> Bool.bool(t)),
+    JSON         ("JSON",   "JSON",            "JSON",              "Y", t -> t),
+    DataSet      ("DS",     "DataSet",         "*",                 "Y", t -> t),
+    StringArray  ("ASTR",   "StringArray",     "String,ARRAY",      "Y", t -> getStringArray(t)),
+    NumberArray  ("ANUM",   "NumberArray",     "Number,Int,ARRAY",  "Y", t -> getNumberArray(t)),
+    IntegerArray ("AINT",   "IntegerArray",    "Number,Int,ARRAY",  "Y", t -> getIntegerArray(t)),
+    DoubleArray  ("ADBL",   "DoubleArray",     "Number,Real,ARRAY", "Y", t -> getDoubleArray(t)),
+    DateArray    ("ADT",    "DateArray",       "Date,ARRAY",        "Y", t -> getDateArray(t)),
+    DatetimeArray("ADTM",   "DatetimeArray",   "Date,ARRAY",        "Y", t -> getStringArray(t)),
+    BooleanArray ("ABOL",   "BooleanArray",    "Bool,ARRAY",        "Y", t -> getBoolArray(t)),
+    List         ("list",   "DataSetArray",    "ARRAY",             "Y", t -> t),
+    Unknown      ("",       "",                 "",                 "N", t -> t),
     ;
 
-    public String codeId;
-    public String codeName;
-    public String kind;
-    public String useYn;
-    public Function<String, Object> funcTransform;
+    public final String codeId;
+    public final String codeName;
+    public final String kind;
+    public final String useYn;
+    public final Function<String, Object> funcTransform;
 
-    private Set<String> kindSet;
+    private final Set<String> kindSet;
 
     DataColumnType(String codeId, String codeName, String kind, String useYn, Function<String, Object> funcTransform) {
         this.codeId   = codeId;

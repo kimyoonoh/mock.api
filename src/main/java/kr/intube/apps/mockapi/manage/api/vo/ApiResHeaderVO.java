@@ -1,9 +1,5 @@
 package kr.intube.apps.mockapi.manage.api.vo;
 
-import aidt.gla.common.tools.biz.Bool;
-import kr.intube.apps.mockapi.common.code.HttpMethod;
-import kr.intube.apps.mockapi.common.code.HttpProtocol;
-import kr.intube.apps.mockapi.common.code.HttpResponseType;
 import kr.intube.apps.mockapi.common.model.SheetVO;
 import lombok.Getter;
 import lombok.Setter;

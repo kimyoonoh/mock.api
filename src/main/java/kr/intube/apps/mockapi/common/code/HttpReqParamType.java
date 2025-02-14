@@ -2,7 +2,9 @@ package kr.intube.apps.mockapi.common.code;
 
 import aidt.gla.common.code.CodeEnum;
 import aidt.gla.common.tools.biz.Checker;
+import lombok.Getter;
 
+@Getter
 public enum HttpReqParamType implements CodeEnum {
     Query ("QUERY",  "Request Query String Parameter",   "*", "Y"),
     Path  ("PATH",  "Request Url Path Variable",  "*", "Y"),
@@ -12,10 +14,10 @@ public enum HttpReqParamType implements CodeEnum {
     Unknown("",  "",   "", "N"),
     ;
 
-    public String codeId;
-    public String codeName;
-    public String kind;
-    public String useYn;
+    public final String codeId;
+    public final String codeName;
+    public final String kind;
+    public final String useYn;
 
     HttpReqParamType(String codeId, String codeName, String kind, String useYn) {
         this.codeId   = codeId;

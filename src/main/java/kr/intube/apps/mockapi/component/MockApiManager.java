@@ -3,13 +3,10 @@ package kr.intube.apps.mockapi.component;
 import aidt.gla.common.component.PropertySourceManager;
 import aidt.gla.common.exception.ApiException;
 import aidt.gla.common.exception.error.ApiErrorCode;
-import aidt.gla.common.exception.error.SysErrorCode;
 import aidt.gla.common.http.response.ResponseResult;
 import aidt.gla.common.model.valueset.ValueSet;
-import aidt.gla.common.tools.bean.BeanUtil;
 import aidt.gla.common.tools.biz.Bool;
 import aidt.gla.common.tools.biz.Checker;
-import aidt.gla.common.tools.biz.StrCalc;
 import aidt.gla.common.tools.context.SpringContext;
 import aidt.gla.common.utils.DateUtil;
 import aidt.gla.common.utils.FileUtil;
@@ -29,13 +26,8 @@ import kr.intube.apps.mockapi.manage.dataset.vo.DataSetVO;
 import kr.intube.apps.mockapi.manage.filter.vo.FilterVO;
 import kr.intube.apps.mockapi.manage.generate.range.vo.RangeVO;
 import kr.intube.apps.mockapi.manage.generate.valueset.vo.ValueSetVO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParseException;
@@ -43,7 +35,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.PathContainer;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.ServletRequestPathUtils;
@@ -56,13 +47,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.net.http.HttpClient;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -127,7 +114,7 @@ public class MockApiManager {
         return false;
     }
 
-    private <T extends SheetVO> void loadSheetData(SheetName sheetName, List<LinkedHashMap<String, Object>> sheetData) {
+    private void loadSheetData(SheetName sheetName, List<LinkedHashMap<String, Object>> sheetData) {
         List<SheetVO> list = new ArrayList<>();
 
         for (LinkedHashMap<String, Object> row : sheetData) {
@@ -209,7 +196,7 @@ public class MockApiManager {
                 r.setStep(range.getStep());
             } else if (range.getGap() != null) {
                 r.setGap(range.getGap());
-            } else if (range.getValueList().size() > 0) {
+            } else if (range.getValueList().isEmpty()) {
                 r.setGrade(range.getValueList());
             }
 
@@ -225,9 +212,9 @@ public class MockApiManager {
         return rangeMap;
     }
 
-    public Map<String, ValueSet> initValueSetMap() {
+    public Map<String, ValueSet<String>> initValueSetMap() {
         List<ValueSetVO> valueSets = GlobalParams.get(SheetName.VALUESET.codeId);
-        Map<String, ValueSet> valuesetMap = new HashMap<>();
+        Map<String, ValueSet<String>> valuesetMap = new HashMap<>();
 
         for (ValueSetVO vsVO : valueSets) {
             ValueSet<String> vs = vsVO.getRatioList().length > 0 ? new ValueSet<>(vsVO.getValueList(), vsVO.getRatioList()) : new ValueSet<>(vsVO.getValueList());
@@ -277,7 +264,7 @@ public class MockApiManager {
         }
     }
 
-    public void reconstMockData() throws IOException {
+    public void reconstMockData() {
         log.info("Reconstruction Mock Data ");
 
         // 공통 변수를 적용한다.
@@ -322,7 +309,7 @@ public class MockApiManager {
             }
         }
 
-        Map<String, List<DataSetVO>> datasetMap = (Map<String, List<DataSetVO>>) GlobalParams.get("DataSetMap");
+        Map<String, List<DataSetVO>> datasetMap = GlobalParams.get("DataSetMap");
 
         // Bin Response attribte (Header, Cookie)
         for (ApiResVO res : responses) {
@@ -436,7 +423,7 @@ public class MockApiManager {
     private Semaphore reloading = new Semaphore(false, "갱신 처리중입니다. 잠시 기다려주십시요.");
 
     @GetMapping("/reload/server")
-    public ResponseResult uploadFile(HttpServletRequest req, HttpServletResponse res) throws IOException, ApiException {
+    public ResponseResult uploadFile() throws IOException, ApiException {
         ApiErrorCode.BadRequest.check(!isClient);
         // if () return ResponseResult.message("목업 서버에는 갱신 기능을 직접 호출할 수 없습니다.");
 
@@ -590,7 +577,7 @@ public class MockApiManager {
         return (HandlerMethod) handlerMapping.getHandler(request).getHandler();
     }
 
-    private RequestMappingInfo requestMapping(HttpServletRequest request) throws Exception {
+    private RequestMappingInfo requestMapping(HttpServletRequest request) {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
 
         for(Map.Entry entry : handlerMethods.entrySet()) {
@@ -654,7 +641,7 @@ public class MockApiManager {
     }
 
     public boolean notExistRequestData(ApiReqVO reqVO, Map<String, String> map) {
-        return reqVO.isRequireYn() ? !map.containsKey(reqVO.getParameterId()) : false;
+        return reqVO.isRequireYn() && !map.containsKey(reqVO.getParameterId());
     }
 
     public Map<String, Object> getRequestParameterMap(HttpServletRequest request, Map<String, ApiReqVO> reqInfos) throws Exception {
@@ -665,7 +652,7 @@ public class MockApiManager {
 
         Map<String, Object> requestParameter = new HashMap<>();
 
-        String value = "";
+        String value = null;
         for (String reqId : reqInfos.keySet()) {
             ApiReqVO reqVO = reqInfos.get(reqId);
 
@@ -717,8 +704,8 @@ public class MockApiManager {
 
         Map<String, List<DataSetVO>> datasetMap = GlobalParams.get("DataSetMap");
         Map<String, MockRange> rangeMap         = GlobalParams.get("RangeMap");
-        Map<String, ValueSet> valuesetMap       = GlobalParams.get("ValueSetMap");
-        Map<String, String> varMap              = GlobalParams.get("VarMap");
+        Map<String, ValueSet<String>> valuesetMap       = GlobalParams.get("ValueSetMap");
+        //Map<String, String> varMap              = GlobalParams.get("VarMap");
 
         List<LinkedHashMap<String, Object>> rows = GlobalParams.get(datasetId);
 
@@ -760,7 +747,7 @@ public class MockApiManager {
                         } else {
                             List<Map<String, Object>> dataRow = getRowData(datasetMap.get(objectKey), searchData);
 
-                            value = dataRow.size() > 0 ? dataRow.get(0) : "{}";
+                            value = dataRow.isEmpty() ? dataRow.get(0) : "{}";
                         }
                     }
                     break;
@@ -808,7 +795,7 @@ public class MockApiManager {
 
     private final static String RES_MESSAGE = "MOCKUP API [%s] %s : %s";
 
-    public ResponseResult apiGateway(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseResult apiGateway(HttpServletRequest request) throws Exception {
         RequestMappingInfo rm = requestMapping(request);
 
         ApiErrorCode.BadRequest.check(Checker.isNull(rm));

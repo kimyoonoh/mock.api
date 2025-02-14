@@ -1,8 +1,5 @@
 package kr.intube.apps.mockapi.manage.generate.range.vo;
 
-import aidt.gla.common.tools.biz.Bool;
-import aidt.gla.common.tools.biz.Checker;
-import kr.intube.apps.mockapi.common.code.CookieSamesiteType;
 import kr.intube.apps.mockapi.common.model.SheetVO;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,8 +41,8 @@ public class RangeVO extends SheetVO {
 
         String [] vl = getColumnArray(row, "VL_LST");
         vo.valueList = new ArrayList<>();
-        for (int i = 0; i < vl.length; i++) {
-            vo.valueList.add(new BigDecimal(vl[i]));
+        for (String v : vl) {
+            vo.valueList.add(new BigDecimal(v));
         }
 
         String [] rl = getColumnArray(row, "ORCN_RT_LST");

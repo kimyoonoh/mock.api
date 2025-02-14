@@ -2,10 +2,9 @@ package kr.intube.apps.mockapi.common.code;
 
 import aidt.gla.common.code.CodeEnum;
 import aidt.gla.common.tools.biz.Checker;
+import lombok.Getter;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
+@Getter
 public enum SheetName implements CodeEnum {
     API("API",  "ApiVO",   "*", "Y"),
     REQ("REQ",  "ApiReqVO",   "*", "Y"),
@@ -20,10 +19,10 @@ public enum SheetName implements CodeEnum {
     Unknown("",  "SheetVO",   "", "N"),
     ;
 
-    public String codeId;
-    public String codeName;
-    public String kind;
-    public String useYn;
+    public final String codeId;
+    public final String codeName;
+    public final String kind;
+    public final String useYn;
 
     SheetName(String codeId, String codeName, String kind, String useYn) {
         this.codeId   = codeId;

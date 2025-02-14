@@ -1,17 +1,12 @@
 package kr.intube.apps.mockapi.manage.api.vo;
 
-import aidt.gla.common.tools.biz.Bool;
-import aidt.gla.common.tools.biz.Checker;
-import kr.intube.apps.mockapi.common.code.HttpReqParamType;
 import kr.intube.apps.mockapi.common.code.HttpResponseType;
 import kr.intube.apps.mockapi.common.model.SheetVO;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter

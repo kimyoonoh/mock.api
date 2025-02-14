@@ -2,7 +2,9 @@ package kr.intube.apps.mockapi.common.code;
 
 import aidt.gla.common.code.CodeEnum;
 import aidt.gla.common.tools.biz.Checker;
+import lombok.Getter;
 
+@Getter
 public enum FilterOperationType implements CodeEnum {
     Equal      ("EQ",   "같다",   "*", "Y"),
     NotEqual   ("NEQ",   "같지않다.",   "*", "Y"),
@@ -15,10 +17,10 @@ public enum FilterOperationType implements CodeEnum {
     Unknown    ("",  ".",   "*", "Y")
     ;
 
-    public String codeId;
-    public String codeName;
-    public String kind;
-    public String useYn;
+    public final String codeId;
+    public final String codeName;
+    public final String kind;
+    public final String useYn;
 
     FilterOperationType(String codeId, String codeName, String kind, String useYn) {
         this.codeId   = codeId;

@@ -1,14 +1,11 @@
 package kr.intube.apps.mockapi.manage.generate.valueset.vo;
 
 import aidt.gla.common.code.CodeEnum;
-import aidt.gla.common.tools.biz.Bool;
-import aidt.gla.common.tools.biz.Checker;
 import kr.intube.apps.mockapi.common.code.DataColumnType;
 import kr.intube.apps.mockapi.common.model.SheetVO;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 
 @Getter

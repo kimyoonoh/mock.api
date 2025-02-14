@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Component("global")
 public class GlobalParams {
-    private GenericMap params;
+    private final GenericMap params;
 
     public static GlobalParams _inst = null;
 

@@ -26,7 +26,7 @@ public class DataSetColumnVO extends SheetVO {
     private String valueSetId;
     private String rangeId;
 
-    private ValueSet values;
+    private ValueSet<String> values;
     private Range ranges;
 
     @Override

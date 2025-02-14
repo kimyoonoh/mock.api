@@ -92,7 +92,7 @@ public class DriveHelper {
     public String getFileId(String fileName) throws IOException {
         for (File f : getFileList(100).getFiles()) {
             if (Checker.eq(fileName, f.getName())) return f.getId();
-        };
+        }
 
         return "";
     }

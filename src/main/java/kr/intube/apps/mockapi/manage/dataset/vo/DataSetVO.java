@@ -1,7 +1,5 @@
 package kr.intube.apps.mockapi.manage.dataset.vo;
 
-import aidt.gla.common.tools.biz.Bool;
-import kr.intube.apps.mockapi.common.code.CookieSamesiteType;
 import kr.intube.apps.mockapi.common.code.DataColumnType;
 import kr.intube.apps.mockapi.common.code.DataGenType;
 import kr.intube.apps.mockapi.common.model.SheetVO;

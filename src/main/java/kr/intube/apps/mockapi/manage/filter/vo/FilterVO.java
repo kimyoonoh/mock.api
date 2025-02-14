@@ -1,7 +1,5 @@
 package kr.intube.apps.mockapi.manage.filter.vo;
 
-import aidt.gla.common.tools.biz.Bool;
-import kr.intube.apps.mockapi.common.code.CookieSamesiteType;
 import kr.intube.apps.mockapi.common.code.FilterCombinationType;
 import kr.intube.apps.mockapi.common.code.FilterOperationType;
 import kr.intube.apps.mockapi.common.model.SheetVO;
