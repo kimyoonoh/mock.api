@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="useGeneratedKeys" value="true"/>
+        <setting name="autoMappingBehavior" value="FULL"/>
+        <setting name="autoMappingUnknownColumnBehavior" value="WARNING"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logPrefix" value="DAO"/> <!-- 확인 필요 -->
+        <setting name="logImpl" value="SLF4J"/>
+        <!--<setting name="shrinkWhitespacesInSql" value="true"/>-->
+        <!--
+        Bulk SQL이 많거나 긴 SQL이 자주 호출되는 경우엔 true(Default false)로 바꿈
+        SQL Command Buffer 한계가 있음 (Default 1MB)
+        -->
+    </settings>
+    
+   	<typeAliases>
+   		<!-- Java 기초 자료형 -->
+   		<typeAlias type="java.lang.Integer"   alias="Integer"/>
+   		<typeAlias type="java.lang.Long"      alias="Long"/>
+   		<typeAlias type="java.util.Map"       alias="Map"/>
+   		<typeAlias type="java.lang.String"    alias="String"/>
+	</typeAliases>
+	
+ </configuration>

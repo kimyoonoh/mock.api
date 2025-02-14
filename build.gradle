@@ -1,0 +1,171 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '2.7.17'
+    id 'io.spring.dependency-management' version '1.1.4'
+    //id 'war'
+
+    // Nexus 배포
+    id 'maven-publish'
+}
+
+group = 'aidt-ldc'
+version = '0.0.1'
+// version = '2.7.17'
+
+java {
+    sourceCompatibility = '11'
+}
+
+// JavaDoc 한글 인코딩 설정
+javadoc {
+    options.addStringOption("locale",      "ko_KR");
+    options.addStringOption("encoding",    "UTF-8");
+    options.addStringOption("charset",     "UTF-8");
+    options.addStringOption("docencoding", "UTF-8");
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    // DEVOPS - Set nexus address for import library
+    maven {
+        url commonNexusUrl
+        allowInsecureProtocol true
+
+        credentials {
+            username nexusUsername
+            password nexusPassword
+        }
+    }
+}
+
+dependencies {
+    /* =====================================================================
+         Spring library
+       ===================================================================== */
+    /* Web */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    /* Logging */
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+    /* Validation */
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    /* DB  */
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'com.mysql:mysql-connector-j:8.0.33'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+
+    /* Spring test */
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    /* =====================================================================
+	     3-party library
+	   ===================================================================== */
+
+    /* Swagger */
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+
+    /* Lombok */
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    /* Redis */
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    /* Web Socket - F/E <-> B/E Event Pub/Sub */
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.1.2'
+    implementation 'org.webjars:stomp-websocket:2.3.3-1'
+
+    /* Apache Common - Http Connect */
+    implementation 'commons-io:commons-io:2.15.0'
+
+    /* Google Reflactions */
+    implementation 'org.reflections:reflections:0.9.9-RC1'
+
+    /* Object Storage and Cdn */
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.238'
+    implementation 'com.akamai:edgeauth:0.2.0'
+    /* Object Storage and Cdn */
+
+    /* Jasypt - encrypt/decrypt property value  */
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+
+    /* OpenFeign */
+    implementation platform("org.springframework.cloud:spring-cloud-dependencies:2021.0.5")
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    /* Apache POI */
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
+
+    /* Google Drive */
+    implementation 'com.google.api-client:google-api-client:2.0.0'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.34.1'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0'
+
+    /* =====================================================================
+	     Aidt Common Library
+	   ===================================================================== */
+    implementation 'aidt-gla:aidt-gla-common:0.0.2'
+}
+
+jar {
+    enabled=true
+    archiveClassifier = '' // Classifier 제거
+
+    manifest {
+        attributes 'Main-Class': "aidt.ldc.batch.Application"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    exclude "META-INF/*.SF"
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+
+    // 이 부분 추가
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+publishing {
+    // 스프링 배치 Nexus에 업로드
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.springframework.boot'
+            artifactId = 'spring-boot-starter-batch'
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            //url = version.endsWith('SNAPSHOT') ? snapshotsNexusUrl : releasesNexusUrl
+            url = commonReleasesNexusUrl
+
+            allowInsecureProtocol true
+
+            credentials {
+                username nexusUsername
+                password nexusPassword
+            }
+        }
+    }
+}
+
+bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

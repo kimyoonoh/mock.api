@@ -1,0 +1,91 @@
+server:
+  port: 8080
+  root:
+    path: D:\aidt_workshop\aidt-ldc-app
+  servlet:
+    context-path: /api
+#    context-path: /
+    filter:
+      xss-sql-injection:
+        exclude-path:
+    common-params:
+  shutdown: graceful #default immediate
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 3s
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-31020-kr1.vpc-cdb.gov-ntruss.com:13370/ldc
+    read-only: false
+    username: ldcuser
+    #    password: AiDt^ldc430
+    password: ENC(9clWq2oaePZAxjXxH8z6FR4byIL24uT6jFIqGrgmfClr1+PBV0f+hBtp9r6Tnav7)
+
+mybatis:
+  config-location: classpath:config/mybatis-config.xml
+  mapper-locations: classpath:sqlmap/**/*.xml
+
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  document:
+    title: LMS 고도화 대시보드 API Mock Server
+    version: 1.0.0
+    description: LMS 고도화 대시보드 API Mock Server
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+    
+logging:
+  dao:
+    dump:
+      level: DEBUG
+      parameter: true # DAO에서 dump 메소드를 사용하면 실행 파라미터를 덤프한다.
+      sql: true # DAO에서 dump 메소드를 사용하면 실행 파라미터를 덤프한다.
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
+      max-history: 30
+      clena-history-on-start: true
+  file:
+    name: /aidt/log/mock/aidt-adv-lms-mock-app.log
+#     name: D:\temp\aidt-adv-lms-mock-app.log
+  level:
+    aidt:
+      gla: DEBUG
+      ldc: DEBUG
+      zaxxer:
+        hikari: INFO
+    javax:
+      sql:
+        DataSource: DEBUG
+    jdbc:
+      audit: TRACE
+      resultset: TRACE
+      resultsettable: TRACE  #SQL 결과 데이터 Table을 로그로 남긴다.
+      sqlonly: OFF     #SQL만 로그로 남긴다.
+      sqltiming: TRACE    #SQL과 소요시간을 표기한다.
+      connection: DEBUG  # 커넥션 확인가능
+    org:
+      springframework: INFO
+
+# 구글 드라이브 접속 정보 설정
+google:
+  drive:
+    app-name: AIDT-Mockup REST API
+    credentials:
+      file-path: api-project-108305436670-ef69509e81f2.json
+      account: mockrowdata@api-project-108305436670.iam.gserviceaccount.com
+    mime:
+      spreadsheet: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      #spreadsheet: application/vnd:ms-excel
+    file-id: 147B_F5J30hxmuLH3jFmtP8ZtUpbRCjNcfc8DDupZC14
+    page-size: 10
