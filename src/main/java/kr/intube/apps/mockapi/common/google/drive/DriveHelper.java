@@ -1,6 +1,9 @@
 package kr.intube.apps.mockapi.common.google.drive;
 
 import aidt.gla.common.tools.biz.Checker;
+import aidt.gla.common.tools.password.RandomMerged;
+import aidt.gla.common.utils.FileUtil;
+import com.amazonaws.util.StringInputStream;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -19,6 +22,7 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class DriveHelper {
@@ -44,9 +48,16 @@ public class DriveHelper {
 
     // 구글 드라이브 API 인증 키 파일
     private InputStream getKeyFile() throws IOException {
-        return ResourceUtils
-            .getURL("classpath:" + credentialsFilePath)
-            .openStream();
+
+        InputStream is = ResourceUtils.getURL("classpath:API-CREDENTION.data").openStream();
+
+        byte [] apiContent = FileUtil.read(is);
+
+        RandomMerged rm = new RandomMerged();
+
+        String decryptText = RandomMerged.decrypt(new String(apiContent, "UTF-8"));
+
+        return new StringInputStream(decryptText);
     }
 
     private GoogleCredential getCredentials() throws IOException {
