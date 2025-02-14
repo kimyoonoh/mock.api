@@ -493,7 +493,7 @@ public class MockApiManager {
 
         public ReqMappInfo(RequestMappingInfo mapp) throws NoSuchMethodException {
             this.mapp   = mapp;
-            this.method = MockApiManager.class.getDeclaredMethod("apiGateway", HttpServletRequest.class, HttpServletResponse.class);
+            this.method = MockApiManager.class.getDeclaredMethod("apiGateway", HttpServletRequest.class);
         }
 
         public void setApiId(String apiId) {
