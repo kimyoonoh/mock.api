@@ -35,7 +35,7 @@ public class DriveHelper {
     @Value("${google.drive.credentials.file-path:api-project-108305436670-ef69509e81f2.json}")
     private String credentialsFilePath;
 
-    @Value("${google.drive.credentials.account:mockrowdata@api-project-108305436670.iam.gserviceaccount.com}")
+    @Value("${google.drive.credentials.account:mockapi@api-project-108305436670.iam.gserviceaccount.com}")
     private String apiAccountMail;
 
     @Value("${google.drive.mime.spreadsheet:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet}")

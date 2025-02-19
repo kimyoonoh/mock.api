@@ -83,7 +83,7 @@ google:
     app-name: AIDT-Mockup REST API
     credentials:
       file-path: api-project-108305436670-ef69509e81f2.json
-      account: mockrowdata@api-project-108305436670.iam.gserviceaccount.com
+      account: mockapi@api-project-108305436670.iam.gserviceaccount.com
     mime:
       spreadsheet: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
       #spreadsheet: application/vnd:ms-excel

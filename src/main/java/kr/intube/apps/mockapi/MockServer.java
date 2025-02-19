@@ -34,16 +34,15 @@ public class MockServer implements ApplicationRunner {
 
         this.apiManager.registRestApi();
     }
-
     /*
     public void aaa() throws IOException {
         RandomMerged rm = new RandomMerged();
 
-        String jsonText = FileUtil.readText("D:\\aidt_workshop\\aidt-adv-lms-mock-server\\src\\main\\resources\\api-project-108305436670-ef69509e81f2.json");
+        String jsonText = FileUtil.readText("D:\\aidt_workshop\\api-project-108305436670-0be9e88fadf8.json");
 
         String endText = rm.mergeEncrypt(jsonText);
 
         FileUtil.save("D:\\aidt_workshop\\aidt-adv-lms-mock-server\\src\\main\\resources\\API-CREDENTION.data", endText);
     }
-     */
+    */
 }

@@ -476,7 +476,9 @@ public class MockApiManager {
                 wr.flush();
             }
 
-            log.info("Post Call return : {}", FileUtil.read(conn.getInputStream()));
+            byte [] sendResult = FileUtil.read(conn.getInputStream());
+
+            log.debug("Post Call return : {}", new String(sendResult, "UTF-8"));
     }
 
     public MockApiManager() {
