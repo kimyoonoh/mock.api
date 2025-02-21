@@ -804,7 +804,7 @@ public class MockApiManager {
 
         ApiVO apiVO = apiInfo.get(rm.getName());
 
-        log.info("Api Gateway : {}", rm.getName());
+        log.info("Api Gateway : {} {}", request.getRequestURL(), rm.getName());
 
         Map<String, Object> inputParams = getRequestParameterMap(request, apiVO.getRequest());
 
