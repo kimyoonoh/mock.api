@@ -642,6 +642,49 @@ public class MockApiManager {
         return requestCookieMap;
     }
 
+    public Map<String, String> getRequestBody(HttpServletRequest request) throws IOException {
+        Map<String, String> requestBodyMap = new HashMap<>();
+
+        String contentType = request.getHeader("Content-Type");
+
+        byte [] bodyContent = request.getInputStream().readAllBytes();
+
+        boolean isText = contentType.startsWith("text");
+        boolean isJson = contentType.endsWith("json");
+        boolean isForm = contentType.endsWith("www-form-urlencoded");
+
+        if (isText) {
+            String bodyText = new String(bodyContent, "UTF-8");
+
+            // JSON 을 MAP 으로 만든다.
+            if (isJson) return JSONUtil.toMap(bodyText);
+
+            if (isForm) {
+                // www-form-urlencoded 로 넘어올 경우에는 쿼리 스트링 형태이므로 문자열을 분해해서 파라미터를 만든다.
+                for (String param : bodyText.split("&")) {
+                    String[] token = param.split("=");
+
+                    String key   = token[0];
+                    String value = token.length > 1 ? token[1] : "";
+
+                    if (requestBodyMap.containsKey(key)) {
+                        // 배열이라면
+                        String preValue = requestBodyMap.get(key);
+                        requestBodyMap.put(key, preValue.concat(",").concat(value));
+                    } else {
+                        requestBodyMap.put(key, value);
+                    }
+                }
+            }
+        } else {
+            // 바이너리 유형일 경우에는 처리할 껀던지가 없음
+            log.error("Unsupported content type: {}", contentType);
+        }
+
+        //
+        return requestBodyMap;
+    }
+
     public boolean notExistRequestData(ApiReqVO reqVO, Map<String, String> map) {
         return reqVO.isRequireYn() && !map.containsKey(reqVO.getParameterId());
     }
@@ -651,6 +694,7 @@ public class MockApiManager {
         Map<String, String> requestQuery  = bindParameterToMap(request);
         Map<String, String> requestCookie = getRequestCookie(request);
         Map<String, String> requestHeader = getRequestHeader(request);
+        Map<String, String> requestBody   = getRequestBody(request);
 
         Map<String, Object> requestParameter = new HashMap<>();
 
@@ -680,9 +724,11 @@ public class MockApiManager {
                     requestParameter.put(reqId, Checker.isNull(value) ? reqVO.getDefaultValue() : value);
                     break;
                 case Body:
-
-
+                    ApiErrorCode.BadRequest.check(notExistRequestData(reqVO, requestBody));
+                    value = requestBody.get(reqId);
+                    requestParameter.put(reqId, Checker.isNull(value) ? reqVO.getDefaultValue() : value);
                 default:
+
             }
         }
 
