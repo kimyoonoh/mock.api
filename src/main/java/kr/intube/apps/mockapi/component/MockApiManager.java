@@ -50,6 +50,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -575,10 +576,6 @@ public class MockApiManager {
         handlerMapping.registerMapping(mappInfo.getMapp(), this, mappInfo.getMethod());
     }
 
-    private HandlerMethod handlerMethod(HttpServletRequest request) throws Exception {
-        return (HandlerMethod) handlerMapping.getHandler(request).getHandler();
-    }
-
     private RequestMappingInfo requestMapping(HttpServletRequest request) {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
 
@@ -649,23 +646,23 @@ public class MockApiManager {
 
         byte [] bodyContent = request.getInputStream().readAllBytes();
 
+        String bodyText = new String(bodyContent, "UTF-8");
+
         boolean isText = contentType.startsWith("text");
         boolean isJson = contentType.endsWith("json");
         boolean isForm = contentType.endsWith("www-form-urlencoded");
 
+        // JSON 을 MAP 으로 만든다.
+        if (isJson) return JSONUtil.toMap(bodyText);
+
         if (isText) {
-            String bodyText = new String(bodyContent, "UTF-8");
-
-            // JSON 을 MAP 으로 만든다.
-            if (isJson) return JSONUtil.toMap(bodyText);
-
             if (isForm) {
                 // www-form-urlencoded 로 넘어올 경우에는 쿼리 스트링 형태이므로 문자열을 분해해서 파라미터를 만든다.
                 for (String param : bodyText.split("&")) {
                     String[] token = param.split("=");
 
                     String key   = token[0];
-                    String value = token.length > 1 ? token[1] : "";
+                    String value = token.length > 1 ? URLDecoder.decode(token[1]) : "";
 
                     if (requestBodyMap.containsKey(key)) {
                         // 배열이라면
@@ -677,8 +674,9 @@ public class MockApiManager {
                 }
             }
         } else {
-            // 바이너리 유형일 경우에는 처리할 껀던지가 없음
-            log.error("Unsupported content type: {}", contentType);
+
+            // 바이너리 유형일 경우에는 처리할 껀덕지가 없음
+            //log.error("Unsupported content type: {}", contentType);
         }
 
         //
