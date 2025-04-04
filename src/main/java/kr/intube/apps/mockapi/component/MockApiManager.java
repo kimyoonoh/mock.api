@@ -3,6 +3,7 @@ package kr.intube.apps.mockapi.component;
 import aidt.gla.common.component.PropertySourceManager;
 import aidt.gla.common.exception.ApiException;
 import aidt.gla.common.exception.error.ApiErrorCode;
+import aidt.gla.common.http.request.ContentType;
 import aidt.gla.common.http.response.ResponseResult;
 import aidt.gla.common.model.valueset.ValueSet;
 import aidt.gla.common.tools.biz.Bool;
@@ -586,7 +587,7 @@ public class MockApiManager {
         return null;
     }
 
-    private Map<String, String> getPathVariable(HttpServletRequest request) throws Exception {
+    private Map<String, String> getPathVariable(HttpServletRequest request) {
         PathContainer path = ServletRequestPathUtils.getParsedRequestPath(request).pathWithinApplication();
         PathPattern pathPattern = requestMapping(request).getPathPatternsCondition().getFirstPattern();
         PathPattern.PathMatchInfo matchAndExtract = pathPattern.matchAndExtract(path);
@@ -642,15 +643,15 @@ public class MockApiManager {
     public Map<String, String> getRequestBody(HttpServletRequest request) throws IOException {
         Map<String, String> requestBodyMap = new HashMap<>();
 
-        String contentType = request.getHeader("Content-Type");
+        ContentType contentType = new ContentType(request.getHeader("Content-Type"));
 
         byte [] bodyContent = request.getInputStream().readAllBytes();
 
         String bodyText = new String(bodyContent, "UTF-8");
 
-        boolean isText = contentType.startsWith("text");
-        boolean isJson = contentType.endsWith("json");
-        boolean isForm = contentType.endsWith("www-form-urlencoded");
+        boolean isText = contentType.getMediaType() == ContentType.MediaType.TEXT;
+        boolean isJson = contentType.getSubType().endsWith("json");
+        boolean isForm = contentType.getSubType().endsWith("www-form-urlencoded");
 
         // JSON 을 MAP 으로 만든다.
         if (isJson) return JSONUtil.toMap(bodyText);
@@ -659,14 +660,14 @@ public class MockApiManager {
             if (isForm) {
                 // www-form-urlencoded 로 넘어올 경우에는 쿼리 스트링 형태이므로 문자열을 분해해서 파라미터를 만든다.
                 for (String param : bodyText.split("&")) {
-                    String[] token = param.split("=");
+                    String [] token = param.split("=");
 
                     String key   = token[0];
                     String value = token.length > 1 ? URLDecoder.decode(token[1]) : "";
 
                     if (requestBodyMap.containsKey(key)) {
                         // 배열이라면
-                        String preValue = requestBodyMap.get(key);
+                        String preValue = String.valueOf(requestBodyMap.get(key));
                         requestBodyMap.put(key, preValue.concat(",").concat(value));
                     } else {
                         requestBodyMap.put(key, value);
@@ -674,12 +675,11 @@ public class MockApiManager {
                 }
             }
         } else {
-
+            requestBodyMap.put("binary-base64", Base64.getEncoder().encodeToString(bodyContent));
             // 바이너리 유형일 경우에는 처리할 껀덕지가 없음
             //log.error("Unsupported content type: {}", contentType);
         }
 
-        //
         return requestBodyMap;
     }
 
