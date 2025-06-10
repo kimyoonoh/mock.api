@@ -3,7 +3,8 @@ package kr.intube.apps.mockapi.component;
 import aidt.gla.common.component.PropertySourceManager;
 import aidt.gla.common.exception.ApiException;
 import aidt.gla.common.exception.error.ApiErrorCode;
-import aidt.gla.common.http.request.ContentType;
+import aidt.gla.common.http.request.content.ContentType;
+import aidt.gla.common.http.request.content.type.MediaType;
 import aidt.gla.common.http.response.ResponseResult;
 import aidt.gla.common.model.valueset.ValueSet;
 import aidt.gla.common.tools.biz.Bool;
@@ -649,7 +650,7 @@ public class MockApiManager {
 
         String bodyText = new String(bodyContent, "UTF-8");
 
-        boolean isText = contentType.getMediaType() == ContentType.MediaType.TEXT;
+        boolean isText = contentType.getMediaType() == MediaType.TEXT;
         boolean isJson = contentType.getSubType().endsWith("json");
         boolean isForm = contentType.getSubType().endsWith("www-form-urlencoded");
 
